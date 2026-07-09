@@ -29,7 +29,6 @@ class SettingsActivity : BaseActivity() {
         private val fakeDns by lazy { findPreference<CheckBoxPreference>(AppConfig.PREF_FAKE_DNS_ENABLED) }
         private val appendHttpProxy by lazy { findPreference<CheckBoxPreference>(AppConfig.PREF_APPEND_HTTP_PROXY) }
 
-        //        private val localDnsPort by lazy { findPreference<EditTextPreference>(AppConfig.PREF_LOCAL_DNS_PORT) }
         private val vpnDns by lazy { findPreference<EditTextPreference>(AppConfig.PREF_VPN_DNS) }
         private val vpnBypassLan by lazy { findPreference<ListPreference>(AppConfig.PREF_VPN_BYPASS_LAN) }
         private val vpnInterfaceAddress by lazy { findPreference<ListPreference>(AppConfig.PREF_VPN_INTERFACE_ADDRESS_CONFIG_INDEX) }
@@ -63,12 +62,8 @@ class SettingsActivity : BaseActivity() {
         private val proxySharing by lazy { findPreference<CheckBoxPreference>(AppConfig.PREF_PROXY_SHARING) }
 
         override fun onCreatePreferences(bundle: Bundle?, s: String?) {
-            // Use MMKV as the storage backend for all Preferences
-            // This prevents inconsistencies between SharedPreferences and MMKV
             preferenceManager.preferenceDataStore = MmkvPreferenceDataStore()
-
             addPreferencesFromResource(R.xml.pref_settings)
-
             initPreferenceSummaries()
 
             localDns?.setOnPreferenceChangeListener { _, any ->
@@ -146,7 +141,6 @@ class SettingsActivity : BaseActivity() {
                     true
                 }
             }
-
         }
 
         private fun initPreferenceSummaries() {
@@ -177,9 +171,6 @@ class SettingsActivity : BaseActivity() {
                             true
                         }
                     }
-
-                    is CheckBoxPreference, is androidx.preference.SwitchPreferenceCompat -> {
-                    }
                 }
             }
 
@@ -207,19 +198,10 @@ class SettingsActivity : BaseActivity() {
         override fun onStart() {
             super.onStart()
             updateHevTunSettings(MmkvManager.decodeSettingsBool(AppConfig.PREF_USE_HEV_TUNNEL, true))
-
-            // Initialize mode-dependent UI states
             updateMode(MmkvManager.decodeSettingsString(AppConfig.PREF_MODE, VPN))
-
-            // Initialize local proxy state
             updateEnableLocalProxy(MmkvManager.decodeSettingsBool(AppConfig.PREF_ENABLE_LOCAL_PROXY, true))
-
-            // Initialize mux-dependent UI states
             updateMux(MmkvManager.decodeSettingsBool(AppConfig.PREF_MUX_ENABLED, false))
-
-            // Initialize fragment-dependent UI states
             updateFragment(MmkvManager.decodeSettingsBool(AppConfig.PREF_FRAGMENT_ENABLED, false))
-
             updateDynamicSocksPort(MmkvManager.decodeSettingsBool(AppConfig.PREF_DYNAMIC_SOCKS_PORT, false))
         }
 
@@ -228,7 +210,6 @@ class SettingsActivity : BaseActivity() {
             localDns?.isEnabled = vpn
             fakeDns?.isEnabled = vpn
             appendHttpProxy?.isEnabled = vpn
-//            localDnsPort?.isEnabled = vpn
             vpnDns?.isEnabled = vpn
             vpnBypassLan?.isEnabled = vpn
             vpnInterfaceAddress?.isEnabled = vpn
@@ -253,7 +234,6 @@ class SettingsActivity : BaseActivity() {
 
         private fun updateLocalDns(enabled: Boolean) {
             fakeDns?.isEnabled = enabled
-//            localDnsPort?.isEnabled = enabled
             vpnDns?.isEnabled = !enabled
         }
 
@@ -271,7 +251,6 @@ class SettingsActivity : BaseActivity() {
             val concurrency = value?.toIntOrNull() ?: 8
             muxConcurrency?.summary = concurrency.toString()
         }
-
 
         private fun updateMuxXudpConcurrency(value: String?) {
             if (value == null) {

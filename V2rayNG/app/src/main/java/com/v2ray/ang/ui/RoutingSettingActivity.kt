@@ -43,7 +43,6 @@ class RoutingSettingActivity : HelperBaseActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        //setContentView(binding.root)
         setContentViewWithToolbar(binding.root, showHomeAsUp = true, title = getString(R.string.routing_settings_title))
 
         adapter = RoutingSettingRecyclerAdapter(viewModel, ActivityAdapterListener())
@@ -77,7 +76,15 @@ class RoutingSettingActivity : HelperBaseActivity() {
         R.id.import_predefined_rulesets -> importPredefined().let { true }
         R.id.import_rulesets_from_clipboard -> importFromClipboard().let { true }
         R.id.import_rulesets_from_qrcode -> importQRcode()
+        R.id.import_rulesets_from_file -> {
+            importFromFile()
+            true
+        }
         R.id.export_rulesets_to_clipboard -> export2Clipboard().let { true }
+        R.id.export_rulesets_to_file -> {
+            exportToFile()
+            true
+        }
         else -> super.onOptionsItemSelected(item)
     }
 
@@ -148,13 +155,45 @@ class RoutingSettingActivity : HelperBaseActivity() {
             .show()
     }
 
-    private fun importQRcode(): Boolean {
-        launchQRCodeScanner { scanResult ->
-            if (scanResult != null) {
-                importRulesetsFromQRcode(scanResult)
+    private fun importFromFile() {
+        AlertDialog.Builder(this).setMessage(R.string.routing_settings_import_rulesets_tip)
+            .setPositiveButton(android.R.string.ok) { _, _ ->
+                launchFileChooser { uri ->
+                    if (uri == null) return@launchFileChooser
+                    showLoading()
+                    lifecycleScope.launch(Dispatchers.IO) {
+                        try {
+                            val content = contentResolver.openInputStream(uri)?.use { input ->
+                                input.bufferedReader().readText()
+                            }
+                            if (content.isNullOrEmpty()) {
+                                withContext(Dispatchers.Main) {
+                                    hideLoading()
+                                    toastError(R.string.toast_failure)
+                                }
+                                return@launch
+                            }
+                            val result = SettingsManager.resetRoutingRulesets(content)
+                            withContext(Dispatchers.Main) {
+                                if (result) {
+                                    refreshData()
+                                    toastSuccess(R.string.toast_success)
+                                } else {
+                                    toastError(R.string.toast_failure)
+                                }
+                            }
+                        } catch (e: Exception) {
+                            LogUtil.e(AppConfig.TAG, "Failed to read ruleset file", e)
+                            withContext(Dispatchers.Main) {
+                                hideLoading()
+                                toastError(R.string.toast_failure)
+                            }
+                        }
+                    }
+                }
             }
-        }
-        return true
+            .setNegativeButton(android.R.string.cancel, null)
+            .show()
     }
 
     private fun export2Clipboard() {
@@ -167,6 +206,48 @@ class RoutingSettingActivity : HelperBaseActivity() {
         }
     }
 
+    private fun exportToFile() {
+        val rulesetList = MmkvManager.decodeRoutingRulesets()
+        if (rulesetList.isNullOrEmpty()) {
+            toastError(R.string.toast_none_data)
+            return
+        }
+
+        // Предлагаем имя файла с текущим штампом времени
+        val defaultFileName = "v2rayMF_ruleset_${System.currentTimeMillis()}.json"
+
+        launchCreateDocument(defaultFileName) { uri ->
+            if (uri == null) return@launchCreateDocument
+            showLoading()
+            lifecycleScope.launch(Dispatchers.IO) {
+                try {
+                    val jsonContent = JsonUtil.toJson(rulesetList)
+                    contentResolver.openOutputStream(uri)?.use { output ->
+                        output.write(jsonContent.toByteArray())
+                    }
+                    withContext(Dispatchers.Main) {
+                        hideLoading()
+                        toastSuccess(R.string.toast_success)
+                    }
+                } catch (e: Exception) {
+                    LogUtil.e(AppConfig.TAG, "Failed to export ruleset to file", e)
+                    withContext(Dispatchers.Main) {
+                        hideLoading()
+                        toastError(R.string.toast_failure)
+                    }
+                }
+            }
+        }
+    }
+
+    private fun importQRcode(): Boolean {
+        launchQRCodeScanner { scanResult ->
+            if (scanResult != null) {
+                importRulesetsFromQRcode(scanResult)
+            }
+        }
+        return true
+    }
 
     private fun importRulesetsFromQRcode(qrcode: String?): Boolean {
         AlertDialog.Builder(this).setMessage(R.string.routing_settings_import_rulesets_tip)
@@ -204,11 +285,9 @@ class RoutingSettingActivity : HelperBaseActivity() {
             )
         }
 
-        override fun onRemove(guid: String, position: Int) {
-        }
+        override fun onRemove(guid: String, position: Int) {}
 
-        override fun onShare(url: String) {
-        }
+        override fun onShare(url: String) {}
 
         override fun onRefreshData() {
             refreshData()

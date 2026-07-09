@@ -34,7 +34,6 @@ class SubEditActivity : BaseActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        //setContentView(binding.root)
         setContentViewWithToolbar(binding.root, showHomeAsUp = true, title = getString(R.string.title_sub_setting))
 
         setupProfileRemarkInputs()
@@ -47,9 +46,6 @@ class SubEditActivity : BaseActivity() {
         }
     }
 
-    /**
-     * binding selected server config
-     */
     private fun bindingServer(subItem: SubscriptionItem): Boolean {
         binding.etRemarks.text = Utils.getEditable(subItem.remarks)
         binding.etUrl.text = Utils.getEditable(subItem.url)
@@ -61,12 +57,15 @@ class SubEditActivity : BaseActivity() {
         binding.allowInsecureUrl.isChecked = subItem.allowInsecureUrl
         binding.etPreProfile.text = Utils.getEditable(subItem.prevProfile)
         binding.etNextProfile.text = Utils.getEditable(subItem.nextProfile)
+
+        // Связываем новые элементы интерфейса с сохраненными данными
+        binding.autoSendSystemInfo.isChecked = subItem.sendSystemInfo
+        binding.etCustomSystemParams.text = Utils.getEditable(subItem.customSystemParams.orEmpty())
+        binding.etCustomHeaders.text = Utils.getEditable(subItem.customHeaders.orEmpty())
+        binding.ignoreSubRouting.isChecked = subItem.ignoreSubRouting
         return true
     }
 
-    /**
-     * clear or init server config
-     */
     private fun clearServer(): Boolean {
         binding.etRemarks.text = null
         binding.etUrl.text = null
@@ -75,6 +74,12 @@ class SubEditActivity : BaseActivity() {
         binding.etUpdateInterval.text = null
         binding.etPreProfile.text = null
         binding.etNextProfile.text = null
+
+        // Очищаем новые элементы интерфейса
+        binding.autoSendSystemInfo.isChecked = false
+        binding.etCustomSystemParams.text = null
+        binding.etCustomHeaders.text = null
+        binding.ignoreSubRouting.isChecked = false
         return true
     }
 
@@ -86,7 +91,6 @@ class SubEditActivity : BaseActivity() {
                 EConfigType.PROXYCHAIN,
             )
         )
-
         setupProfileRemarkInput(binding.etPreProfile, binding.btnPreProfileDropdown, suggestions)
         setupProfileRemarkInput(binding.etNextProfile, binding.btnNextProfileDropdown, suggestions)
     }
@@ -109,9 +113,6 @@ class SubEditActivity : BaseActivity() {
         }
     }
 
-    /**
-     * save server config
-     */
     private fun saveServer(): Boolean {
         val subItem = MmkvManager.decodeSubscription(editSubId) ?: SubscriptionItem()
 
@@ -122,12 +123,16 @@ class SubEditActivity : BaseActivity() {
         subItem.enabled = binding.chkEnable.isChecked
         subItem.autoUpdate = binding.autoUpdateCheck.isChecked
 
+        // Сохраняем значения из новых элементов интерфейса в базу
+        subItem.sendSystemInfo = binding.autoSendSystemInfo.isChecked
+        subItem.customSystemParams = binding.etCustomSystemParams.text.toString().trim().takeIf { it.isNotEmpty() }
+        subItem.customHeaders = binding.etCustomHeaders.text.toString().trim().takeIf { it.isNotEmpty() }
+        subItem.ignoreSubRouting = binding.ignoreSubRouting.isChecked
+
         val intervalInput = binding.etUpdateInterval.text.toString().trim()
         val intervalMinutes = intervalInput.toLongOrNull()
         if (subItem.autoUpdate) {
-            // autoUpdate is enabled: interval must be valid
             if (intervalMinutes == null) {
-                // field is empty, reset to default
                 subItem.updateInterval = SubscriptionItem().updateInterval
             } else if (intervalMinutes < AppConfig.SUBSCRIPTION_MIN_INTERVAL_MINUTES) {
                 toast(R.string.toast_invalid_update_interval)
@@ -136,7 +141,6 @@ class SubEditActivity : BaseActivity() {
                 subItem.updateInterval = intervalMinutes
             }
         } else {
-            // autoUpdate is disabled: save only if the value is valid, otherwise keep the existing value
             if (intervalMinutes != null && intervalMinutes >= AppConfig.SUBSCRIPTION_MIN_INTERVAL_MINUTES) {
                 subItem.updateInterval = intervalMinutes
             }
@@ -155,7 +159,6 @@ class SubEditActivity : BaseActivity() {
                 toast(R.string.toast_invalid_url)
                 return false
             }
-
             if (!Utils.isValidSubUrl(subItem.url)) {
                 toast(R.string.toast_insecure_url_protocol)
                 if (!subItem.allowInsecureUrl) {
@@ -171,9 +174,6 @@ class SubEditActivity : BaseActivity() {
         return true
     }
 
-    /**
-     * save server config
-     */
     private fun deleteServer(): Boolean {
         if (editSubId.isNotEmpty()) {
             if (MmkvManager.decodeSettingsBool(AppConfig.PREF_CONFIRM_REMOVE)) {
@@ -186,9 +186,7 @@ class SubEditActivity : BaseActivity() {
                             }
                         }
                     }
-                    .setNegativeButton(android.R.string.cancel) { _, _ ->
-                        // do nothing
-                    }
+                    .setNegativeButton(android.R.string.cancel, null)
                     .show()
             } else {
                 lifecycleScope.launch(Dispatchers.IO) {
@@ -206,7 +204,6 @@ class SubEditActivity : BaseActivity() {
         menuInflater.inflate(R.menu.action_server, menu)
         del_config = menu.findItem(R.id.del_config)
         save_config = menu.findItem(R.id.save_config)
-
         return super.onCreateOptionsMenu(menu)
     }
 
@@ -215,13 +212,10 @@ class SubEditActivity : BaseActivity() {
             deleteServer()
             true
         }
-
         R.id.save_config -> {
             saveServer()
             true
         }
-
         else -> super.onOptionsItemSelected(item)
     }
-
 }

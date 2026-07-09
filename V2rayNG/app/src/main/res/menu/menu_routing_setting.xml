@@ -19,8 +19,17 @@
         android:title="@string/routing_settings_import_rulesets_from_qrcode"
         app:showAsAction="never" />
     <item
+        android:id="@+id/import_rulesets_from_file"
+        android:title="@string/routing_settings_import_rulesets_from_file"
+        app:showAsAction="never" />
+    <item
         android:id="@+id/export_rulesets_to_clipboard"
         android:title="@string/routing_settings_export_rulesets_to_clipboard"
         app:showAsAction="never" />
 
+    <!-- НАШ НОВЫЙ ПУНКТ ЭКСПОРТА В ФАЙЛ -->
+    <item
+        android:id="@+id/export_rulesets_to_file"
+        android:title="@string/routing_settings_export_rulesets_to_file"
+        app:showAsAction="never" />
 </menu>

@@ -13,5 +13,8 @@ data class SubscriptionItem(
     var filter: String? = null,
     var allowInsecureUrl: Boolean = false,
     var userAgent: String? = null,
+    var sendSystemInfo: Boolean = false,
+    var customSystemParams: String? = null,
+    var customHeaders: String? = null,
+    var ignoreSubRouting: Boolean = false,
 )
-

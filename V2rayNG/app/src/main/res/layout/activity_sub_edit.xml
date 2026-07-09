@@ -60,7 +60,6 @@
                     android:layout_height="wrap_content"
                     android:text="@string/sub_setting_url" />
 
-
                 <EditText
                     android:id="@+id/et_url"
                     android:layout_width="match_parent"
@@ -198,6 +197,96 @@
 
             </LinearLayout>
 
+            <!-- НАСТРОЙКИ НА АНГЛИЙСКОМ ЯЗЫКЕ -->
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="@dimen/padding_spacing_dp16"
+                android:orientation="horizontal">
+
+                <TextView
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1.0"
+                    android:text="Send System Info (HWID, Model, OS) on update" />
+
+                <androidx.appcompat.widget.SwitchCompat
+                    android:id="@+id/auto_send_system_info"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:paddingStart="@dimen/padding_spacing_dp16"
+                    android:paddingEnd="@dimen/padding_spacing_dp16"
+                    app:theme="@style/BrandedSwitch" />
+
+            </LinearLayout>
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="@dimen/padding_spacing_dp16"
+                android:orientation="vertical">
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Custom System Parameters (optional)" />
+
+                <EditText
+                    android:id="@+id/et_custom_system_params"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:hint="hwid=custom_value,os=CustomOS,model=MyModel"
+                    android:inputType="text" />
+
+            </LinearLayout>
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="@dimen/padding_spacing_dp16"
+                android:orientation="vertical">
+
+                <TextView
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:text="Custom HTTP Headers (optional)" />
+
+                <EditText
+                    android:id="@+id/et_custom_headers"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:gravity="top"
+                    android:hint="Accept-Language: ru-RU,ru;q=0.9&#10;Custom-Header: value"
+                    android:inputType="textMultiLine"
+                    android:maxLines="6"
+                    android:minLines="2"
+                    android:scrollbars="vertical" />
+
+            </LinearLayout>
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="@dimen/padding_spacing_dp16"
+                android:orientation="horizontal">
+
+                <TextView
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1.0"
+                    android:text="Ignore subscription routing rules" />
+
+                <androidx.appcompat.widget.SwitchCompat
+                    android:id="@+id/ignore_sub_routing"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:paddingStart="@dimen/padding_spacing_dp16"
+                    android:paddingEnd="@dimen/padding_spacing_dp16"
+                    app:theme="@style/BrandedSwitch" />
+
+            </LinearLayout>
+            <!-- КОНЕЦ НОВЫХ ПОЛЕЙ -->
+
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
@@ -233,7 +322,7 @@
                         android:layout_centerVertical="true"
                         android:background="?attr/selectableItemBackgroundBorderless"
                         android:contentDescription="@string/sub_setting_pre_profile"
-                        android:src="@drawable/ic_arrow_drop_down" />
+                        app:srcCompat="@drawable/ic_arrow_drop_down" />
 
                 </RelativeLayout>
 
@@ -274,7 +363,7 @@
                         android:layout_centerVertical="true"
                         android:background="?attr/selectableItemBackgroundBorderless"
                         android:contentDescription="@string/sub_setting_next_profile"
-                        android:src="@drawable/ic_arrow_drop_down" />
+                        app:srcCompat="@drawable/ic_arrow_drop_down" />
 
                 </RelativeLayout>
 

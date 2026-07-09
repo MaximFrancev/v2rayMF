@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <string name="app_name" translatable="false">v2rayNG</string>
+    <string name="app_name" translatable="false">v2rayMF</string>
     <string name="app_widget_name">Switch</string>
     <string name="app_tile_name">Switch</string>
     <string name="app_tile_first_use">First use of this feature, please use the app to add server</string>
@@ -176,11 +176,6 @@
     <string name="title_pref_mux_concurency">TCP connections（range -1 to 1024）</string>
     <string name="title_pref_mux_xudp_concurency">XUDP connections（range -1 to 1024）</string>
     <string name="title_pref_mux_xudp_quic">Handling of QUIC in mux tunnel</string>
-    <string-array name="mux_xudp_quic_entries">
-        <item>reject</item>
-        <item>allow</item>
-        <item>skip</item>
-    </string-array>
 
     <string name="title_pref_speed_enabled">Enable speed display</string>
     <string name="summary_pref_speed_enabled">Display current speed in the notification.\nNotification icon would change based on
@@ -225,7 +220,7 @@
     <string name="title_pref_real_ping_concurrency">True delay test concurrency</string>
 
     <string name="title_pref_ip_api_url">Current connection info test url</string>
-    <string name="summary_pref_ip_api_url">Url</string>
+    <string name="summary_pref_ip_api_url">URL</string>
 
     <string name="title_pref_proxy_sharing_enabled">Allow connections from the LAN</string>
     <string name="summary_pref_proxy_sharing_enabled">Other devices can connect to proxy by your IP address through local proxy. Only enable in trusted networks to avoid unauthorized connections</string>
@@ -257,7 +252,7 @@
     <string name="summary_pref_append_http_proxy">HTTP proxy will be used directly from (browser/ some supported apps), without going through the virtual NIC device (Android 10+)</string>
 
     <string name="title_pref_double_column_display">Enable double column display</string>
-    <string name="summary_pref_double_column_display">The profile list is displayed in double columns, allowing more content to be displayed on the screen. You need to restart the application to take effect.</string>
+    <string name="summary_pref_double_column_display">The profile list is displayed in double columns, allowing more content to be displayed on the screen. To run need to restart the application to take effect.</string>
 
     <string name="title_pref_group_all_display">Enable show all groups</string>
     <string name="summary_pref_group_all_display">Add an extra "All Tabs" page</string>
@@ -283,17 +278,17 @@
     <string name="title_core_loglevel">Log Level</string>
     <string name="title_outbound_domain_resolve_method">Outbound domain pre-resolve method</string>
     <string name="title_mode">Mode</string>
-    <string name="title_mode_help">Click me for more help</string>
+    <string name="title_mode_help">Point to more help</string>
     <string name="title_language">Language</string>
-    <string name="title_ui_settings">UI settings</string>
-    <string name="title_pref_ui_mode_night">UI mode settings</string>
+    <string name="title_ui_settings">User Interface Settings</string>
+    <string name="title_pref_ui_mode_night">Dark Mode</string>
     <string name="title_pref_use_hev_tunnel">Enable Hev TUN Feature</string>
-    <string name="summary_pref_use_hev_tunnel">When enabled, TUN will use hev-socks5-tunnel; otherwise, it will use xray-core.</string>
+    <string name="summary_pref_use_hev_tunnel">Choose to enable TUN will use hev-socks5-tunnel otherwise use xray-core</string>
     <string name="title_pref_hev_tunnel_loglevel">Hev Tun Log Level</string>
     <string name="title_pref_hev_tunnel_rw_timeout">Hev Tun read/write timeout (seconds) (tcp,udp default 300,60)</string>
     <string name="title_mode_settings">Mode Settings</string>
     <string name="title_root_mode_enabled">Root mode enabled (Root Users)</string>
-    <string name="summary_root_mode_enabled">Enable low-level transparent proxying via root privileges. This mode bypasses the standard Android system VPN to directly take over all underlying network traffic. Once enabled, the original regular mode, per-app routing, and related VPN settings will become completely invalid.</string>
+    <string name="summary_root_mode_enabled">Enable low-level transparent proxying via root privileges. This mode bypasses the standard Android system VPN to directly take over all network traffic. Once enabled, the original regular mode, per-app routing, and related VPN settings will become completely invalid.</string>
     <string name="toast_root_required">Root access is required for this feature</string>
     <string name="title_root_lan_sharing">LAN / tethering sharing (Root Users)</string>
     <string name="summary_root_lan_sharing">Route Wi-Fi hotspot and USB-tethered devices through the VPN</string>
@@ -352,6 +347,8 @@
     <string name="routing_settings_import_rulesets_from_clipboard">Import ruleset from clipboard</string>
     <string name="routing_settings_import_rulesets_from_qrcode">Import ruleset from QRcode</string>
     <string name="routing_settings_export_rulesets_to_clipboard">Export ruleset to clipboard</string>
+    <string name="routing_settings_export_rulesets_to_file">Export ruleset to file</string>
+    <string name="routing_settings_import_rulesets_from_file">Import ruleset from file</string>
     <string name="routing_settings_locked">Locked, keep this rule when import presets</string>
     <string name="routing_settings_domain">domain</string>
     <string name="routing_settings_ip">ip</string>
@@ -414,34 +411,49 @@
     <string name="title_webdav_pass">Password</string>
     <string name="title_webdav_remote_path">Remote directory (optional)</string>
 
+    <!-- НОВЫЕ СТРОКИ ДЛЯ ВЫБОРА РЕЖИМА ПИНГА -->
+    <string name="title_pref_ping_method">Ping Method</string>
+    <string name="summary_pref_ping_method">Choose how latency is measured for servers</string>
+    <string-array name="ping_method_entries">
+        <item>Real Ping (via Proxy)</item>
+        <item>TCP Port Ping (Direct)</item>
+        <item>ICMP Ping (Direct)</item>
+    </string-array>
+    <string-array name="ping_method_values">
+        <item>0</item>
+        <item>1</item>
+        <item>2</item>
+    </string-array>
+
     <string-array name="share_method">
-        <item>QRcode</item>
-        <item>Export to clipboard</item>
-        <item>Export full config to clipboard</item>
+        <item>二维码</item>
+        <item>导出至剪贴板</item>
+        <item>导出完整配置至剪贴板</item>
     </string-array>
 
     <string-array name="share_method_more">
-        <item>QRcode</item>
-        <item>Export to clipboard</item>
-        <item>Export full config to clipboard</item>
-        <item>Edit</item>
-        <item>Delete</item>
+        <item>二维码</item>
+        <item>导出至剪贴板</item>
+        <item>导出完整配置至剪贴板</item>
+        <item>编辑</item>
+        <item>删除</item>
     </string-array>
 
     <string-array name="share_sub_method">
-        <item>QRcode</item>
-        <item>Export to clipboard</item>
+        <item>二维码</item>
+        <item>导出至剪贴板</item>
+    </string-array>
+
+    <!-- Массивы, уникальные для strings.xml -->
+    <string-array name="browser_dialer_mode">
+        <item>Disable</item>
+        <item>OkHttp</item>
+        <item>WebView</item>
     </string-array>
 
     <string-array name="mode_entries">
         <item>VPN</item>
         <item>Proxy only</item>
-    </string-array>
-
-    <string-array name="browser_dialer_mode">
-        <item>Disable</item>
-        <item>OkHttp</item>
-        <item>WebView</item>
     </string-array>
 
     <string-array name="ui_mode_night">
@@ -480,6 +492,12 @@
     <string-array name="config_backup_options">
         <item>Local</item>
         <item>WebDAV</item>
+    </string-array>
+
+    <string-array name="mux_xudp_quic_entries">
+        <item>reject</item>
+        <item>allow</item>
+        <item>skip</item>
     </string-array>
 
 </resources>
